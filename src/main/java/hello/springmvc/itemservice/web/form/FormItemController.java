@@ -1,4 +1,4 @@
-package hello.springmvc.itemservice.web.basic;
+package hello.springmvc.itemservice.web.form;
 
 import hello.springmvc.itemservice.domain.item.Item;
 import hello.springmvc.itemservice.domain.item.ItemRepository;
@@ -13,7 +13,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/form/items")
 @RequiredArgsConstructor
-public class BasicItemController {
+public class FormItemController {
 
     private final ItemRepository itemRepository;
 
@@ -32,8 +32,9 @@ public class BasicItemController {
     }
 
     @GetMapping("/add")
-    public String addForm() {
-        return "basic/addForm";
+    public String addForm(Model model) {
+        model.addAttribute("item", new Item());
+        return "form/addForm";
     }
 
     //    @PostMapping("/add")
@@ -50,7 +51,7 @@ public class BasicItemController {
     //    @PostMapping("/add")
     public String addItemV2(Item item) { //@ModelAttribute("item") 생략
         itemRepository.save(item);
-//        return "basic/item";
+//        return "form/item";
         return "redirect:/form/items/" + item.getId();
     }
 
