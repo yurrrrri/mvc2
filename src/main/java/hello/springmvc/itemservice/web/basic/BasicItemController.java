@@ -2,7 +2,6 @@ package hello.springmvc.itemservice.web.basic;
 
 import hello.springmvc.itemservice.domain.item.Item;
 import hello.springmvc.itemservice.domain.item.ItemRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
-@RequestMapping("/basic/items")
+@RequestMapping("/form/items")
 @RequiredArgsConstructor
 public class BasicItemController {
 
@@ -22,14 +21,14 @@ public class BasicItemController {
     public String items(Model model) {
         List<Item> items = itemRepository.findAll();
         model.addAttribute("items", items);
-        return "basic/items";
+        return "form/items";
     }
 
     @GetMapping("/{itemId}")
     public String item(@PathVariable long itemId, Model model) {
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item", item);
-        return "basic/item";
+        return "form/item";
     }
 
     @GetMapping("/add")
@@ -37,22 +36,22 @@ public class BasicItemController {
         return "basic/addForm";
     }
 
-//    @PostMapping("/add")
+    //    @PostMapping("/add")
     public String addItemV1(@RequestParam String itemName,
-                       @RequestParam int price,
-                       @RequestParam Integer quantity,
-                       Model model) {
+                            @RequestParam int price,
+                            @RequestParam Integer quantity,
+                            Model model) {
         Item item = new Item(itemName, price, quantity);
         itemRepository.save(item);
         model.addAttribute("item", item);
-        return "basic/item";
+        return "form/item";
     }
 
-//    @PostMapping("/add")
+    //    @PostMapping("/add")
     public String addItemV2(Item item) { //@ModelAttribute("item") 생략
         itemRepository.save(item);
 //        return "basic/item";
-        return "redirect:/basic/items/" + item.getId();
+        return "redirect:/form/items/" + item.getId();
     }
 
     @PostMapping("/add")
@@ -60,26 +59,19 @@ public class BasicItemController {
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
         redirectAttributes.addAttribute("status", true);
-        return "redirect:/basic/items/{itemId}";
+        return "redirect:/form/items/{itemId}";
     }
 
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId, Model model) {
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item", item);
-        return "basic/editForm";
+        return "form/editForm";
     }
 
     @PostMapping("/{itemId}/edit")
     public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
         itemRepository.update(itemId, item);
-        return "redirect:/basic/items/{itemId}";
-    }
-
-    // 테스트용 데이터 추가
-    @PostConstruct
-    public void init() {
-        itemRepository.save(new Item("itemA", 10000, 10));
-        itemRepository.save(new Item("itemB", 20000, 20));
+        return "redirect:/form/items/{itemId}";
     }
 }
