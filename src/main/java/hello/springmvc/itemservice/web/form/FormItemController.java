@@ -3,6 +3,7 @@ package hello.springmvc.itemservice.web.form;
 import hello.springmvc.itemservice.domain.item.Item;
 import hello.springmvc.itemservice.domain.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/form/items")
 @RequiredArgsConstructor
@@ -37,26 +39,10 @@ public class FormItemController {
         return "form/addForm";
     }
 
-    //    @PostMapping("/add")
-    public String addItemV1(@RequestParam String itemName,
-                            @RequestParam int price,
-                            @RequestParam Integer quantity,
-                            Model model) {
-        Item item = new Item(itemName, price, quantity);
-        itemRepository.save(item);
-        model.addAttribute("item", item);
-        return "form/item";
-    }
-
-    //    @PostMapping("/add")
-    public String addItemV2(Item item) { //@ModelAttribute("item") 생략
-        itemRepository.save(item);
-//        return "form/item";
-        return "redirect:/form/items/" + item.getId();
-    }
-
     @PostMapping("/add")
-    public String addItemV3(Item item, RedirectAttributes redirectAttributes) {
+    public String addItem(Item item, RedirectAttributes redirectAttributes) {
+        log.info("item.open = {}", item.getOpen());
+
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
         redirectAttributes.addAttribute("status", true);
