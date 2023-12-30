@@ -2,7 +2,6 @@ package hello.springmvc.itemservice.web.validation;
 
 import hello.springmvc.itemservice.domain.item.Item;
 import hello.springmvc.itemservice.domain.item.ItemRepository;
-import hello.springmvc.itemservice.domain.item.UpdateCheck;
 import hello.springmvc.itemservice.web.validation.form.ItemSaveForm;
 import hello.springmvc.itemservice.web.validation.form.ItemUpdateForm;
 import jakarta.validation.Valid;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -79,7 +77,7 @@ public class ValidationItemControllerV4 {
         return "validation/v4/editForm";
     }
 
-    //    @PostMapping("/{itemId}/edit")
+    @PostMapping("/{itemId}/edit")
     public String edit(@PathVariable Long itemId, @Valid @ModelAttribute("item") ItemUpdateForm form, BindingResult bindingResult) {
         // 특정 필드가 아닌 복합 룰 검증
         if (form.getPrice() != null && form.getQuantity() != null) {
@@ -100,25 +98,6 @@ public class ValidationItemControllerV4 {
         itemParam.setQuantity(form.getQuantity());
 
         itemRepository.update(itemId, itemParam);
-        return "redirect:/validation/v4/items/{itemId}";
-    }
-
-    @PostMapping("/{itemId}/edit")
-    public String editV2(@PathVariable Long itemId, @Validated(UpdateCheck.class) @ModelAttribute Item item, BindingResult bindingResult) {
-        // 특정 필드가 아닌 복합 룰 검증
-        if (item.getPrice() != null && item.getQuantity() != null) {
-            int resultPrice = item.getPrice() * item.getQuantity();
-            if (resultPrice < 10000) {
-                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
-            }
-        }
-
-        if (bindingResult.hasErrors()) {
-            log.info("errors = {}", bindingResult);
-            return "validation/v4/editForm";
-        }
-
-        itemRepository.update(itemId, item);
         return "redirect:/validation/v4/items/{itemId}";
     }
 }
